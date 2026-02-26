@@ -12,7 +12,6 @@ interface AppState {
 	individuals: boolean[]; // which of the 15 are toggled on
 	animate: boolean;
 	welcome: boolean;
-	grayScaleToggle: boolean;
 }
 
 // Initial state matching p5 defaults
@@ -23,8 +22,7 @@ const state = $state<AppState>({
 	family: 0,
 	individuals: Array(15).fill(false),
 	animate: true,
-	welcome: true,
-	grayScaleToggle: true
+	welcome: true
 });
 
 export const appState = state;
@@ -38,8 +36,7 @@ function syncToWindow() {
 		family: state.family,
 		individuals: [...state.individuals],
 		animate: state.animate,
-		welcome: state.welcome,
-		grayScaleToggle: state.grayScaleToggle
+		welcome: state.welcome
 	};
 }
 
@@ -117,13 +114,15 @@ export function setWelcome(visible: boolean) {
 	syncToWindow();
 }
 
-export function toggleGrayScale() {
-	state.grayScaleToggle = !state.grayScaleToggle;
-	syncToWindow();
-}
-
 export function resetAll() {
-	(window as any)._igsFamilyHighlight?.(0, 14);
+	if (state.view === 'zoom') {
+		// In zoom view, reset to showing just the current family
+		const ranges: [number, number][] = [[0, 4], [5, 8], [9, 10], [11, 14]];
+		const [start, end] = ranges[state.family];
+		(window as any)._igsFamilyHighlight?.(start, end);
+	} else {
+		(window as any)._igsFamilyHighlight?.(0, 14);
+	}
 	syncToWindow();
 }
 

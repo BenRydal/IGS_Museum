@@ -118,7 +118,6 @@ function draw() {
         displayFamily = s.family;
         animate = s.animate;
         welcome = s.welcome;
-        grayScaleToggle = s.grayScaleToggle;
     }
 
     background(255);

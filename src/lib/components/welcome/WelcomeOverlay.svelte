@@ -32,13 +32,13 @@
 		onkeydown={handleKeydown}
 	>
 		<div
-			class="mx-4 max-w-[820px] overflow-hidden rounded-2xl bg-white shadow-2xl"
+			class="mx-4 max-w-[1000px] overflow-hidden rounded-2xl bg-white shadow-2xl"
 			onclick={stop}
 		>
 			<!-- Gallery images as a hero strip -->
 			<div class="grid grid-cols-3">
 				{#each galleries as { src, caption }}
-					<div class="group relative h-44 overflow-hidden md:h-56">
+					<div class="group relative h-52 overflow-hidden md:h-72">
 						<img
 							{src}
 							alt={caption}
@@ -56,15 +56,15 @@
 			</div>
 
 			<!-- Content -->
-			<div class="px-8 py-8 text-center md:px-12 md:py-10">
+			<div class="px-10 py-10 text-center md:px-16 md:py-12">
 				<h1
-					class="mb-3 text-2xl font-semibold tracking-tight text-gray-900 md:text-3xl"
+					class="mb-4 text-3xl font-semibold tracking-tight text-gray-900 md:text-4xl"
 					style="font-family: 'Playfair Display', serif;"
 				>
 					Museum Interaction Geography
 				</h1>
 				<p
-					class="mx-auto mb-8 max-w-[520px] text-sm leading-relaxed text-gray-500 md:text-base"
+					class="mx-auto mb-10 max-w-[600px] text-base leading-relaxed text-gray-500 md:text-lg"
 					style="font-family: 'Inter', sans-serif;"
 				>
 					See how 4 families explore 3 gallery spaces in a cultural heritage museum.
@@ -72,7 +72,7 @@
 				</p>
 
 				<button
-					class="mb-6 inline-block cursor-pointer rounded-full bg-gray-900 px-8 py-3 text-sm font-medium text-white shadow-lg transition-all duration-200 hover:bg-gray-700 hover:shadow-xl"
+					class="mb-8 inline-block cursor-pointer rounded-full bg-gray-900 px-10 py-3.5 text-base font-medium text-white shadow-lg transition-all duration-200 hover:bg-gray-700 hover:shadow-xl"
 					style="font-family: 'Inter', sans-serif;"
 					onclick={ondismiss}
 				>
@@ -81,7 +81,7 @@
 
 				<a
 					href="https://par.nsf.gov/servlets/purl/10074100"
-					class="block text-xs leading-relaxed text-gray-500 italic transition-colors hover:text-gray-700"
+					class="inline-block rounded-md bg-gray-100 px-5 py-2.5 text-sm leading-relaxed text-gray-600 italic transition-colors hover:text-gray-800"
 					style="font-family: 'Inter', sans-serif;"
 					target="_blank"
 					rel="noopener noreferrer"

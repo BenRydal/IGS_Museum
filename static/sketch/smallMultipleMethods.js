@@ -39,7 +39,7 @@ if (movement) drawMovement();
     function drawTalk() {
         var i;
         image(baseGrid_2, 0, 0, width, height);
-        if (grayScaleToggle) image(grayScale, 0, 0, width, height);
+        image(grayScale, 0, 0, width, height);
         for (i = 0; i < individualLength; i++) {
             if (mapMovement[i].show) {                image(mapTalk[i], 0, 0, width, height);
             }
