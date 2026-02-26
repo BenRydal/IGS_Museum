@@ -21,33 +21,20 @@ function DrawZoom() {
         if (movement) drawMovementZoom();
         else if (talk) {
             drawTalkZoom();
-            conversationHighlight(); // don't draw convo when video is showing
+            readConversationBridge(); // Svelte controls hover; p5 draws box images
             if (!locked) drawConversationZoom();
         } else if (curation) drawCurationZoom();
     }
 
-    // sets x and y for zoom conversation buttons and calls display function for conversation region of 105 conversation buttons
-    function conversationHighlight() {
-        if (displaySpace == 0) {
-            conversationButtonX = width / 2.4;
-            conversationButtonY = height / 1.09;
-            if (displayFamily == 0) conversationDisplayZoom(0, 9);
-            else if (displayFamily == 1) conversationDisplayZoom(39, 57);
-            else if (displayFamily == 2) conversationDisplayZoom(72, 82);
-            else if (displayFamily == 3) conversationDisplayZoom(86, 89);
-        } else if (displaySpace == 1) {
-            conversationButtonX = width / 2.8;
-            conversationButtonY = height / 1.15;
-            if (displayFamily == 0) conversationDisplayZoom(10, 29);
-            else if (displayFamily == 1) conversationDisplayZoom(58, 66);
-            else if (displayFamily == 2) conversationDisplayZoom(83, 84);
-            else if (displayFamily == 3) conversationDisplayZoom(90, 105);
-        } else if (displaySpace == 2) {
-            conversationButtonX = width / 1.8;
-            conversationButtonY = height / 1.12;
-            if (displayFamily == 0) conversationDisplayZoom(30, 38);
-            else if (displayFamily == 1) conversationDisplayZoom(67, 71);
-            else if (displayFamily == 2) conversationDisplayZoom(85, 85);
+    // Read Svelte conversation hover bridge and draw conversationBoxZoom image if active
+    function readConversationBridge() {
+        var hover = window._igsConversationHover;
+        if (hover && hover.active) {
+            var i = hover.index;
+            if (mapConversation[i] !== -1 && mapConversation[i] !== undefined && mapConversation[i] !== null) {
+                locked = true;
+                image(mapConversation[i].conversationBoxZoom, 0, 0, width, height);
+            }
         }
     }
 
@@ -131,71 +118,5 @@ function DrawZoom() {
                 }
             }
         }
-    }
-
-    // draws buttons for zoom conversation region
-    function conversationDisplayZoom(start, end) {
-        var conversationButtonSpacing, distance, i;
-        // Draws buttons, checks to see if mouse is in one and then drawsConversation
-        stroke(0);
-        strokeWeight(.5);
-        noFill();
-        for (i = start; i <= end; i++) {
-            if (i == start) conversationButtonSpacing = 0;
-            distance = dist(mouseX, mouseY, conversationButtonX + conversationButtonSpacing, conversationButtonY);
-
-            //Either load data or play conversation
-            if ((distance < conversationButtonSizeZoom / 2)) {
-                cursor(HAND);
-                if (mapConversation[i] !== -1 && mapConversation[i] !== undefined && mapConversation[i] !== null) { // if data has been loaded
-                    locked = true;
-                    image(mapConversation[i].conversationBoxZoom, 0, 0, width, height); // Different than !zoom display
-                    if (i !== conversationAudioNumber && mapConversation[i].conversationAudio.isLoaded()) {
-                        mapConversation[i].conversationAudio.play();
-                        conversationAudioNumber = i;
-                    }
-                    drawIndividualConversationText(i);
-                    fill(0);
-                    ellipse(conversationButtonX + conversationButtonSpacing, conversationButtonY, conversationButtonSizeZoom, conversationButtonSizeZoom);
-                    conversationButtonSpacing += conversationButtonGapZoom;
-                    noFill();
-
-                } else {
-                    loadDataConversation(i);
-                }
-            } else {
-                ellipse(conversationButtonX + conversationButtonSpacing, conversationButtonY, conversationButtonSizeZoom, conversationButtonSizeZoom);
-                conversationButtonSpacing += conversationButtonGapZoom;
-            }
-        }
-        fill(0);
-        noStroke();
-        textSize(18);
-        text("   Hover over buttons to read & listen to conversation", conversationButtonX + conversationButtonSpacing, conversationButtonY + conversationButtonSizeZoom / 2); // draw convo msg
-    }
-
-    // draws text when called (e.g. mouse is over conversationButton)
-    function drawIndividualConversationText(lines) {
-        var textLength, i, textBoxTop, talkBubbleLine;
-        var textBoxWidth = 600;
-        var textLeading = 23;
-        var textSpacing = 5;
-        textSize(17);
-        textLength = mapConversation[lines].conversationText.length;
-        textBoxTop = mouseY - textLength * textLeading - 50;
-        talkBubbleLine = textBoxTop - textLeading + textLength * textLeading + textSpacing;
-
-        fill(255, 180);
-        rect(mouseX - textSpacing, textBoxTop - textLeading, textBoxWidth, textLength * textLeading + textSpacing);
-
-        line(mouseX - textSpacing, mouseY, mouseX + 25, talkBubbleLine);
-        line(mouseX - textSpacing, mouseY, mouseX + 75, talkBubbleLine);
-        stroke(255);
-        strokeWeight(2);
-        line(mouseX + 26, talkBubbleLine, mouseX + 73, talkBubbleLine);
-        stroke(0);
-        strokeWeight(.5);
-        fill(0);
-        for (i = 0; i < textLength; i++) text(mapConversation[lines].conversationText[i], mouseX, (i * textLeading) + textBoxTop);
     }
 }

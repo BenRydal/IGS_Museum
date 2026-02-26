@@ -1,49 +1,25 @@
 function DrawSmallMultiple() {
 
     this.draw = function () {
-        noFill(); // reset fill & strokes 
+        noFill(); // reset fill & strokes
         stroke(125);
         strokeWeight(1);
 if (movement) drawMovement();
         else if (talk) {
             drawTalk();
-            conversationDisplay();
+            readConversationBridge();
             if (!locked) image(allConversationBoxes, 0, 0, width, height);
         } else if (curation) drawCuration();
     }
 
-    // loop through conversation array and draw buttons and draw text if mouse is over button
-    function conversationDisplay() {
-        var conversationButtonSpacing, j, distance;
-        stroke(0);
-        strokeWeight(.25);
-        noFill();
-        for (j = 0; j < conversationLength; j++) {
-            if (j == 0 || j == 10 || j == 30 || j == 39 || j == 58 || j == 67 || j == 72 || j == 83 || j == 85 || j == 86 || j == 90) {
-                conversationButtonSpacing = 0;
-                findSpace(j);
-            }
-            distance = dist(mouseX, mouseY, conversationButtonX + conversationButtonSpacing, conversationButtonY);
-            if ((distance < conversationButtonSize / 2)) {
-                cursor(HAND);
-                if (mapConversation[j] !== -1 && mapConversation[j] !== undefined && mapConversation[j] !== null) { // if data has been loaded
-                    locked = true; // sets locked to true to only show one conversatio box back in draw
-                    image(mapConversation[j].conversationBox, 0, 0, width, height);
-                    if (j !== conversationAudioNumber && mapConversation[j].conversationAudio.isLoaded()) {
-                        mapConversation[j].conversationAudio.play();
-                        conversationAudioNumber = j;
-                    }
-                    drawText(j);
-                    fill(0);
-                    ellipse(conversationButtonX + conversationButtonSpacing, conversationButtonY, conversationButtonSize, conversationButtonSize);
-                    conversationButtonSpacing += conversationButtonGap;
-                    noFill();
-                } else {
-                    loadDataConversation(j);
-                }
-            } else {
-                ellipse(conversationButtonX + conversationButtonSpacing, conversationButtonY, conversationButtonSize, conversationButtonSize);
-                conversationButtonSpacing += conversationButtonGap;
+    // Read Svelte conversation hover bridge and draw conversationBox image if active
+    function readConversationBridge() {
+        var hover = window._igsConversationHover;
+        if (hover && hover.active) {
+            var j = hover.index;
+            if (mapConversation[j] !== -1 && mapConversation[j] !== undefined && mapConversation[j] !== null) {
+                locked = true;
+                image(mapConversation[j].conversationBox, 0, 0, width, height);
             }
         }
     }
@@ -80,21 +56,5 @@ if (movement) drawMovement();
             } else if (mapMovement[i].show) {                image(mapCuration[i], 0, 0, width, height);
             }
         }
-    }
-
-    // draws text when called (e.g. mouse is over conversationButton)
-    function drawText(lines) {
-        var textLength, i, textBoxTop;
-        var textBoxWidth = 400;
-        var textLeading = 15;
-        var textSpacing = 5;
-        textSize(12);
-        textLength = mapConversation[lines].conversationText.length;
-        textBoxTop = mouseY - textLength * textLeading;
-
-        fill(255, 180);
-        rect(mouseX - textBoxWidth / 2 - textSpacing, textBoxTop - textLeading, textBoxWidth, textLength * textLeading + textSpacing);
-        fill(0);
-        for (i = 0; i < textLength; i++) text(mapConversation[lines].conversationText[i], mouseX - textBoxWidth / 2, (i * textLeading) + textBoxTop);
     }
 }

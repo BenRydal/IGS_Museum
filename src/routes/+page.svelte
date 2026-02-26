@@ -10,6 +10,9 @@
 	import ViewToggle from '$lib/components/controls/ViewToggle.svelte';
 	import ResetControls from '$lib/components/controls/ResetControls.svelte';
 	import ZoomButtons from '$lib/components/controls/ZoomButtons.svelte';
+	import ConversationButtons from '$lib/components/conversation/ConversationButtons.svelte';
+	import TranscriptPanel from '$lib/components/conversation/TranscriptPanel.svelte';
+	import { panelState, setPanelVisible } from '$lib/stores/conversationPanel.svelte';
 
 	onMount(() => {
 		setupBridge();
@@ -56,10 +59,21 @@
 	{/if}
 </div>
 
-<!-- Top-right icons: reset (small multiple only) + animation + about -->
+<!-- Top-right icons: reset (small multiple only) + conversation panel reopen + animation + about -->
 <div class="pointer-events-auto fixed top-2 right-3 z-50 flex items-center gap-2">
 	{#if appState.view === 'smallMultiple'}
 		<ResetControls />
+	{/if}
+	{#if appState.mode === 'talk' && !panelState.visible}
+		<button
+			class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-1.5 border-gray-400 bg-transparent text-gray-500 transition-colors duration-150 hover:border-gray-600 hover:text-gray-700"
+			onclick={() => setPanelVisible(true)}
+			aria-label="Open transcript panel"
+		>
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+			</svg>
+		</button>
 	{/if}
 	<AnimationToggle />
 	<AboutButton />
@@ -67,6 +81,14 @@
 
 <!-- Zoom buttons (small multiple view) -->
 <ZoomButtons />
+
+<!-- Conversation buttons overlay -->
+<ConversationButtons />
+
+<!-- Draggable transcript panel (talk mode only) -->
+{#if appState.mode === 'talk'}
+	<TranscriptPanel />
+{/if}
 
 <!-- Welcome overlay -->
 <WelcomeOverlay visible={appState.welcome} ondismiss={dismissWelcome} />
