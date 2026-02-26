@@ -4,8 +4,7 @@ function DrawSmallMultiple() {
         noFill(); // reset fill & strokes 
         stroke(125);
         strokeWeight(1);
-        image(gridZoom, 0, 0, width, height); // draw additional base image
-        if (movement) drawMovement();
+if (movement) drawMovement();
         else if (talk) {
             drawTalk();
             conversationDisplay();
@@ -54,7 +53,6 @@ function DrawSmallMultiple() {
         var i;
         image(baseGrid_2, 0, 0, width, height);
         image(baseGrid_3, 0, 0, width, height);
-        rect(xPosMapMovementButton, yPosMapButton, widthMapMovementButton, mapButtonHeight);
         for (i = 0; i < individualLength; i++) {
             if (mapMovement[i].show) {
                 image(mapMovement[i].movement, 0, 0, width, height);
@@ -65,25 +63,21 @@ function DrawSmallMultiple() {
     function drawTalk() {
         var i;
         image(baseGrid_2, 0, 0, width, height);
-        rect(xPosMapTalkButton, yPosMapButton, widthMapTalkButton, mapButtonHeight);
         if (grayScaleToggle) image(grayScale, 0, 0, width, height);
         for (i = 0; i < individualLength; i++) {
-            if (mapMovement[i].show) { // CHANGED
-                image(mapTalk[i], 0, 0, width, height);
+            if (mapMovement[i].show) {                image(mapTalk[i], 0, 0, width, height);
             }
         }
     }
 
     function drawCuration() {
         var i;
-        rect(xPosMapCurationButton, yPosMapButton, widthMapCurationButton, mapButtonHeight);
         image(baseGrid_2, 0, 0, width, height);
         image(baseGrid_3, 0, 0, width, height);
         for (i = 0; i < individualLength; i++) {
             if (i == 2 || i == 3 || i == 4 || i == 12) {
                 continue;
-            } else if (mapMovement[i].show) { // CHANGED
-                image(mapCuration[i], 0, 0, width, height);
+            } else if (mapMovement[i].show) {                image(mapCuration[i], 0, 0, width, height);
             }
         }
     }

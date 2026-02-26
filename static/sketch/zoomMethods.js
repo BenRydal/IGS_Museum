@@ -1,45 +1,23 @@
 function DrawZoom() {
 
-    // draws open buttons, and fills selected ones with displaySpace & displayFamily, then draws base images (grid or plan) for zoom then sends to drawMovementZoom, drawtalkZoom or drawCurationZoom();
+    // draws base images (grid or plan) for zoom then sends to drawMovementZoom, drawTalkZoom or drawCurationZoom()
     this.draw = function () {
-        noFill(); // reset fill & strokes 
+        noFill();
         stroke(125);
-        strokeWeight(2);
-        ellipse(zoomSpaceX, zoomSpaceY1, mapButtonSize, mapButtonSize);
-        ellipse(zoomSpaceX, zoomSpaceY2, mapButtonSize, mapButtonSize);
-        ellipse(zoomSpaceX, zoomSpaceY3, mapButtonSize, mapButtonSize);
-        ellipse(zoomFamilyX1, zoomFamilyY, mapButtonSize, mapButtonSize);
-        ellipse(zoomFamilyX2, zoomFamilyY, mapButtonSize, mapButtonSize);
-        ellipse(zoomFamilyX3, zoomFamilyY, mapButtonSize, mapButtonSize);
-        ellipse(zoomFamilyX4, zoomFamilyY, mapButtonSize, mapButtonSize);
-        fill(125);
+        strokeWeight(1);
 
-        //displaySpace and displayFamily set what space and family buttons are filled vs. empty
+        // Draw base image for selected space
         if (displaySpace == 0) {
             if (talk) image(plan_Walkway, 0, 0, width, height);
             else image(grid_Walkway, 0, 0, width, height);
-            ellipse(zoomSpaceX, zoomSpaceY1, mapButtonSize, mapButtonSize);
         } else if (displaySpace == 1) {
             if (talk) image(plan_Bluegrass, 0, 0, width, height);
             else image(grid_Bluegrass, 0, 0, width, height);
-            ellipse(zoomSpaceX, zoomSpaceY2, mapButtonSize, mapButtonSize);
         } else if (displaySpace == 2) {
             if (talk) image(plan_Rotunda, 0, 0, width, height);
             else image(grid_Rotunda, 0, 0, width, height);
-            ellipse(zoomSpaceX, zoomSpaceY3, mapButtonSize, mapButtonSize);
         }
 
-        if (displayFamily == 0) {
-            ellipse(zoomFamilyX1, zoomFamilyY, mapButtonSize, mapButtonSize);
-        } else if (displayFamily == 1) {
-            ellipse(zoomFamilyX2, zoomFamilyY, mapButtonSize, mapButtonSize);
-        } else if (displayFamily == 2) {
-            ellipse(zoomFamilyX3, zoomFamilyY, mapButtonSize, mapButtonSize);
-        } else if (displayFamily == 3) {
-            ellipse(zoomFamilyX4, zoomFamilyY, mapButtonSize, mapButtonSize);
-        }
-        noFill();
-        strokeWeight(1); // reset weight to draw map Button
         if (movement) drawMovementZoom();
         else if (talk) {
             drawTalkZoom();
@@ -76,10 +54,8 @@ function DrawZoom() {
     // draw zoom Movement paths
     function drawMovementZoom() {
         var i;
-        rect(xPosMapMovementButton, yPosMapButton, widthMapMovementButton, mapButtonHeight);
         for (i = 0; i < individualLength; i++) {
-            if (mapMovement[i].show) { // CHANGED
-                if (mapZoomMovement[i].selectWalkway) {
+            if (mapMovement[i].show) {                if (mapZoomMovement[i].selectWalkway) {
                     image(mapZoomMovement[i].movementWalkway, 0, 0, width, height);
                 } else if (mapZoomMovement[i].selectBluegrass) {
                     image(mapZoomMovement[i].movementBluegrass, 0, 0, width, height);
@@ -108,10 +84,8 @@ function DrawZoom() {
             else if (displayFamily == 1) image(grayScale_21, 0, 0, width, height);
             else if (displayFamily == 2) image(grayScale_22, 0, 0, width, height);
         }
-        rect(xPosMapTalkButton, yPosMapButton, widthMapTalkButton, mapButtonHeight);
         for (i = 0; i < individualLength; i++) {
-            if (mapMovement[i].show) { // CHANGED
-                if (mapZoomMovement[i].selectWalkway) {
+            if (mapMovement[i].show) {                if (mapZoomMovement[i].selectWalkway) {
                     image(mapZoomTalk[i].movementWalkway, 0, 0, width, height);
                 } else if (mapZoomMovement[i].selectBluegrass) {
                     image(mapZoomTalk[i].movementBluegrass, 0, 0, width, height);
@@ -144,12 +118,10 @@ function DrawZoom() {
     // draws curation paths
     function drawCurationZoom() {
         var i;
-        rect(xPosMapCurationButton, yPosMapButton, widthMapCurationButton, mapButtonHeight);
         for (i = 0; i < individualLength; i++) {
             if (i == 2 || i == 3 || i == 4 || i == 12) {
                 continue;
-            } else if (mapMovement[i].show) { // CHANGED
-                // !i indicates spaces where there is no curation
+            } else if (mapMovement[i].show) {                // !i indicates spaces where there is no curation
                 if (mapZoomMovement[i].selectWalkway == true) {
                     if (i !== 0 && i !== 1 && i !== 8 && i !== 14 && i !== 5) image(mapZoomCuration[i].movementWalkway, 0, 0, width, height);
                 } else if (mapZoomMovement[i].selectBluegrass == true) {

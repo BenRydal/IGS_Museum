@@ -21,7 +21,7 @@ var mapMovement = [], // individualLength for all
     mapZoomCuration = [];
 
 // Base image files
-var welcomeScreen, baseGrid, baseGrid_2, baseGrid_3, grayScale, allConversationBoxes, grid_Walkway, grid_Bluegrass, grid_Rotunda, plan_Walkway, plan_Bluegrass, plan_Rotunda, gridZoom, conversationBoxes_00, conversationBoxes_01, conversationBoxes_02, conversationBoxes_03, conversationBoxes_10, conversationBoxes_11, conversationBoxes_12, conversationBoxes_13, conversationBoxes_20, conversationBoxes_21, conversationBoxes_22, grayScale_00, grayScale_01, grayScale_02, grayScale_03, grayScale_10, grayScale_11, grayScale_12, grayScale_13, grayScale_20, grayScale_21, grayScale_22;
+var baseGrid_2, baseGrid_3, grayScale, allConversationBoxes, grid_Walkway, grid_Bluegrass, grid_Rotunda, plan_Walkway, plan_Bluegrass, plan_Rotunda, conversationBoxes_00, conversationBoxes_01, conversationBoxes_02, conversationBoxes_03, conversationBoxes_10, conversationBoxes_11, conversationBoxes_12, conversationBoxes_13, conversationBoxes_20, conversationBoxes_21, conversationBoxes_22, grayScale_00, grayScale_01, grayScale_02, grayScale_03, grayScale_10, grayScale_11, grayScale_12, grayScale_13, grayScale_20, grayScale_21, grayScale_22;
 
 // 3 modes
 var movement = true,
@@ -45,39 +45,21 @@ var reveal = 0,
     animate = true,
     fullScreenTransition = false;
 
-// Button variables
+// Conversation button variables
 var conversationButtonSize = 7,
     conversationButtonSizeZoom = 14,
     conversationButtonGap = 7,
-    conversationButtonGapZoom = 14,
-    zoomButtonSize = 50,
-    zoomExitButtonSize = 100,
-    mapButtonSize = 9;
+    conversationButtonGapZoom = 14;
 
-// Mode button positions
-var yPosMapButton, xPosMapMovementButton, xPosMapTalkButton, xPosMapCurationButton, xPosMapCurationButtonEnd, mapButtonHeight, widthMapMovementButton, widthMapTalkButton, widthMapCurationButton, mapButtonSizeHeight;
-
-// IndividualDisplay button positions
-var individualButtonGap, individualButtonSize, individualButtonY, individualButtonX, xPosBluegrass, xPosGayle, xPosBusiness, xPosMom;
-
-// ConversationDisplay button positions
+// Conversation button positions
 var conversationButtonY, conversationButtonX, yPosWalkway, yPosBluegrass, yPosRotunda, xPosButtonBluegrass, xPosButtonGayle, xPosButtonBusiness, xPosButtonMom;
 
-// Space, family, zoom button positions
-var zoomX1, zoomX2, zoomX3, zoomX4, zoomX5, zoomExitY, zoomFamilyY, zoomSpaceX, zoomFamilyX1, zoomFamilyX2, zoomFamilyX3, zoomFamilyX4, zoomSpaceY1, zoomSpaceY2, zoomSpaceY3;
-
-// Animation/about button positions
-var introMsgButtonXPos, introMsgButtonYPos;
-
-// Starting values for space, family
+// Current space and family selection
 var displaySpace = 1,
     displayFamily = 0;
 
-// reset key buttons
-var yPosReset, yPosReset, resetWidth, resetHeight, conversationKeyWidth;
-
-// timeline variables
-var timelineStart, timelineEnd, timelineStartWalkway, timelineStartBluegrass, timelineStartRotunda;
+// Timeline animation variables
+var timelineStartWalkway, timelineStartBluegrass, timelineStartRotunda;
 
 // Classes
 function Conversation(convo, box, boxZoom, audio) {
@@ -125,21 +107,32 @@ function setup() {
 
 // sets drawing canvas, organizes drawing in 2 views (zoom or not zoom), sets animation
 function draw() {
+    // Read from Svelte store bridge
+    var s = window._igsState;
+    if (s) {
+        zoomView = s.view === 'zoom';
+        movement = s.mode === 'movement';
+        talk = s.mode === 'talk';
+        curation = s.mode === 'curation';
+        displaySpace = s.space;
+        displayFamily = s.family;
+        animate = s.animate;
+        welcome = s.welcome;
+        grayScaleToggle = s.grayScaleToggle;
+    }
+
     background(255);
     var drawingSurface;
     locked = false; // resets locked
-    image(baseGrid, 0, 0, width, height);
-    drawIndividualDisplayButtons();
+    noStroke();
     if (zoomView) {
         drawingSurface = new DrawZoom();
         drawingSurface.draw();
-        drawIntroMsgs();
     } else if (!zoomView) {
         drawingSurface = new DrawSmallMultiple();
         drawingSurface.draw();
     }
     setUpAnimation();
-    if (welcome && !window._igsSvelteWelcome) drawAbout();
 }
 
 function windowResized() {
@@ -147,26 +140,6 @@ function windowResized() {
     positionButtons();
 }
 
-function drawIntroMsgs() {
-    fill(125);
-    textSize(18);
-    noStroke();
-    var a = textWidth("Animation on/off");
-    var b = textWidth("About");
-    var c = textWidth("    ");
-    text("Animation on/off    About", introMsgButtonXPos, introMsgButtonYPos);
-    strokeWeight(1);
-    stroke(0);
-    if (animate) line(introMsgButtonXPos, introMsgButtonYPos + 5, introMsgButtonXPos + a, introMsgButtonYPos + 5);
-    if (welcome) line(introMsgButtonXPos + a + c, introMsgButtonYPos + 5, introMsgButtonXPos + a + b + c, introMsgButtonYPos + 5);
-}
-
-function drawAbout() {
-    imageMode(CENTER);
-    var imageRatio = welcomeScreen.width / welcomeScreen.height;
-    image(welcomeScreen, windowWidth / 2, windowHeight / 2, windowWidth / imageRatio, windowHeight / imageRatio);
-    imageMode(CORNER);
-}
 
 function loadBlankDataArrays() {
     var noData = -1;
@@ -245,15 +218,13 @@ function loadDataConversation(i) {
 
 
 function loadBaseImages() {
-    baseGrid = loadImage(imageFileName + "baseGrid.png");
     baseGrid_2 = loadImage(imageFileName + "baseGrid_2.png");
     baseGrid_3 = loadImage(imageFileName + "baseGrid_3.png");
-    welcomeScreen = loadImage(imageFileName + "introMsg.png");
     grid_Bluegrass = loadImage(imageFileName + "grid_Bluegrass.png");
     // load above first
     grid_Walkway = loadImage(imageFileName + "grid_Walkway.png");
     grid_Rotunda = loadImage(imageFileName + "grid_Rotunda.png");
-    gridZoom = loadImage(imageFileName + "gridZoom.png");
+
     plan_Walkway = loadImage(imageFileName + "plan_Walkway.png");
     plan_Bluegrass = loadImage(imageFileName + "plan_Bluegrass.png");
     plan_Rotunda = loadImage(imageFileName + "plan_Rotunda.png");
@@ -284,34 +255,7 @@ function loadBaseImages() {
 }
 
 function positionButtons() {
-    // y position for individual Buttons
-    individualButtonY = height / 9.05;
-    individualButtonGap = width / 30; // controls individual button line lengths
-    individualButtonSize = width / 45;
-    // y position for family buttons
-    zoomFamilyY = height / 12.75;
-    // x position for space buttons
-    zoomSpaceX = width / 110;
-    // x y positions for mode buttons
-    yPosMapButton = height / 70;
-    xPosMapMovementButton = width / 1.37;
-    mapButtonHeight = height / 35;
-    xPosMapTalkButton = width / 1.255;
-    xPosMapCurationButton = width / 1.132;
-    xPosMapCurationButtonEnd = width / 1.01;
-    widthMapMovementButton = xPosMapTalkButton - xPosMapMovementButton;
-    widthMapTalkButton = xPosMapCurationButton - xPosMapTalkButton;
-    widthMapCurationButton = xPosMapCurationButtonEnd - xPosMapCurationButton;
-    mapButtonSizeHeight = yPosMapButton + mapButtonHeight;
-
-    // x y positions for reset
-    yPosReset = height / 2.625;
-    xPosReset = width / 35;
-    resetWidth = width / 40;
-    resetHeight = height / 75;
-    conversationKeyWidth = width / 15;
-
-    //x y positions for conversation buttons
+    // Conversation button positions
     yPosWalkway = height / 2.5;
     yPosBluegrass = height / 1.56;
     yPosRotunda = height / 1.075;
@@ -320,34 +264,10 @@ function positionButtons() {
     xPosButtonBusiness = width / 1.58;
     xPosButtonMom = width / 1.19;
 
-    // x positions for individual display buttons
-    xPosBluegrass = width / 15;
-    xPosGayle = width / 3.15;
-    xPosBusiness = width / 1.68;
-    xPosMom = width / 1.24;
-    // zoom Buttons
-    zoomX1 = width / 6.83;
-    zoomX2 = width / 2.615;
-    zoomX3 = width / 1.595;
-    zoomX4 = width / 1.145;
-    zoomX5 = width / 2;
-    zoomExitY = height / 6;
-    // x/y positions for family and space buttons
-    zoomFamilyX1 = width / 11.4;
-    zoomFamilyX2 = width / 3.34;
-    zoomFamilyX3 = width / 1.735;
-    zoomFamilyX4 = width / 1.24;
-    zoomSpaceY1 = height / 3;
-    zoomSpaceY2 = height / 1.59;
-    zoomSpaceY3 = height / 1.1;
-
-    // timeline scaling
+    // Timeline scaling
     timelineStartWalkway = width / 2.45;
     timelineStartBluegrass = width / 2.83;
     timelineStartRotunda = width / 1.81;
-    // Intro msg buttons
-    introMsgButtonXPos = width / 30;
-    introMsgButtonYPos = height / 1.075;
 }
 
 // Bridge: called by Svelte when welcome overlay is dismissed
@@ -358,4 +278,24 @@ window._igsWelcomeDismiss = function() {
         individualDisplay(4);
         intro = false;
     }
+};
+
+// Bridge: expose p5 functions for Svelte store to call
+window._igsIndividualDisplay = function(i) {
+    individualDisplay(i);
+};
+window._igsSpaceSelect = function(space) {
+    spaceSelect(space);
+};
+window._igsFamilyHighlight = function(start, end) {
+    familyHighlight(start, end);
+};
+window._igsZoomSelect = function(index) {
+    zoomSelect(index);
+};
+window._igsResetTransition = function() {
+    resetTransition();
+};
+window._igsResetReveal = function() {
+    reveal = 0;
 };
