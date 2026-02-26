@@ -127,10 +127,8 @@ All visualization data is pre-rendered as PNG images following the naming conven
 
 > **Data gaps**: Individuals 3, 11--14 have no Rotunda data. Individuals 2, 3, 4, 12 have no curation data.
 
-## Credits & License
+## Credits
 
-This software is licensed under the [GNU General Public License v2.0](LICENSE).
+Copyright (C) 2018 Ben Rydal Shapiro. All rights reserved.
 
-IGS software was originally developed by **Ben Rydal Shapiro** at Vanderbilt University as part of his dissertation [*Interaction Geography & the Learning Sciences*](https://etd.library.vanderbilt.edu/available/etd-03212018-140140/unrestricted/Shapiro_Dissertation.pdf).
-
-Copyright (C) 2018 Ben Rydal Shapiro, and contributors.
+Originally developed at Vanderbilt University as part of the dissertation [*Interaction Geography & the Learning Sciences*](https://etd.library.vanderbilt.edu/available/etd-03212018-140140/unrestricted/Shapiro_Dissertation.pdf).
